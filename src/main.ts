@@ -20,6 +20,17 @@ app.get('/sessions', async (_, res) => {
   }
 });
 
+app.get('/events/:sessionId', async (req, res) => {
+  try {
+    const events = await PgClient.query(`select * from events where session_id = $1`, [
+      req.params.sessionId,
+    ]);
+    res.json(events);
+  } catch (e) {
+    res.json({ error: true, message: e.message });
+  }
+});
+
 app.post('/events', async (req, res) => {
   try {
     const events = req.body as WatcherEvent[];
