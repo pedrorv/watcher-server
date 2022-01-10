@@ -1,0 +1,32 @@
+version: '3.3'
+
+services:
+  server:
+    command: /bin/sh -c "npm i && npm run dev"
+    container_name: watcher
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
+    volumes:
+      - ./src:/app/src
+      - ./db:/app/db
+      - ./package.json:/app/package.json
+      - ./package-lock.json:/app/package-lock.json
+      - ./tsconfig.json:/app/tsconfig.json
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://watcher:123456@watcher-db:5432/watcher
+
+  postgres:
+    container_name: watcher-db
+    image: postgres:11.8-alpine
+    ports:
+      - 5432:5432
+    env_file:
+      - .env
