@@ -23,6 +23,7 @@ const config: webpack.Configuration = {
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'index.js',
+    libraryTarget: 'commonjs',
   },
   plugins: [new webpack.IgnorePlugin({ resourceRegExp: /^pg-native$/ })],
 };
