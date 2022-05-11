@@ -31,6 +31,10 @@ exports.up = (pgm: MigrationBuilder) => {
       type: 'uuid',
       notNull: true,
     },
+    app_id: {
+      type: 'uuid',
+      notNull: true,
+    },
     properties: {
       type: 'jsonb',
       notNull: true,

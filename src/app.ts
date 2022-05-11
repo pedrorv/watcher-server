@@ -13,9 +13,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (_, res) => res.send('OK'));
 
-app.get('/sessions', isAuthorized, async (_, res) => {
+app.get('/sessions/:appId', isAuthorized, async (req, res) => {
   try {
-    const sessionIds = await PgClient.query(`select distinct(session_id) from events`);
+    const sessionIds = await PgClient.query(
+      `select distinct(session_id) from events where app_id = $1`,
+      [req.params.appId],
+    );
     res.json(sessionIds.map(({ session_id }) => session_id));
   } catch (e) {
     res.json({ error: true, message: e.message });
