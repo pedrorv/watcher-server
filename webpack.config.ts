@@ -4,7 +4,7 @@ import * as webpack from 'webpack';
 const isProd = process.env.NODE_ENV === 'production';
 
 const config: webpack.Configuration = {
-  entry: './src/main.ts',
+  entry: './src/lambda.ts',
   mode: isProd ? 'production' : 'development',
   target: 'node14',
   module: {

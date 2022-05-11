@@ -4,9 +4,10 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start": "node ./build/index.js",
+    "start": "node ./build/main.js",
     "dev": "npm run migrate up && nodemon -r dotenv/config --exec 'ts-node' ./src/main.ts",
-    "build": "rm -rf build && NODE_ENV=production webpack && zip -rj lambda.zip build -x \"*.txt\" \"*.DS_Store\"",
+    "build": "tsc",
+    "build:lambda": "rm -rf build && NODE_ENV=production webpack && zip -rj lambda.zip build -x \"*.txt\" \"*.DS_Store\"",
     "lint": "eslint 'src/**/*.ts'",
     "migrate": "node-pg-migrate -m db/migrations --tsconfig ./tsconfig.json"
   },
