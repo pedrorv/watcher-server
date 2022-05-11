@@ -1,3 +1,4 @@
+import serverless from 'serverless-http';
 import express from 'express';
 import cors from 'cors';
 import { PgClient } from './pg-client';
@@ -46,15 +47,8 @@ app.post('/events', async (req, res) => {
   }
 });
 
-const server = app.listen(port, () => console.log(`Listening on port ${port}`));
-
-const gracefulShutdown = () => {
-  const timeout: NodeJS.Timeout = setTimeout(() => process.exit(1), 10000);
-
-  server.close(() => {
-    clearTimeout(timeout);
-    process.exit(0);
-  });
-};
-process.on('SIGINT', gracefulShutdown);
-process.on('SIGTERM', gracefulShutdown);
+if (process.env.NODE_ENV === 'production') {
+  module.exports.handler = serverless(app);
+} else {
+  app.listen(port, () => console.log(`Listening on port ${port}`));
+}
