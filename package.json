@@ -4,9 +4,9 @@
   "main": "index.js",
   "private": true,
   "scripts": {
-    "start": "node ./build/main.js",
+    "start": "node ./build/index.js",
     "dev": "npm run migrate up && nodemon -r dotenv/config --exec 'ts-node' ./src/main.ts",
-    "build": "tsc",
+    "build": "rm -rf build && NODE_ENV=production webpack && zip -rj lambda.zip build -x \"*.txt\" \"*.DS_Store\"",
     "lint": "eslint 'src/**/*.ts'",
     "migrate": "node-pg-migrate -m db/migrations --tsconfig ./tsconfig.json"
   },
@@ -32,8 +32,10 @@
     "eslint-plugin-prettier": "^3.1.3",
     "nodemon": "^2.0.4",
     "prettier": "^2.0.5",
+    "ts-loader": "^9.3.0",
     "ts-node": "^8.10.2",
     "typescript": "^4.3.5",
-    "webpack": "^5.65.0"
+    "webpack": "^5.72.1",
+    "webpack-cli": "^4.9.2"
   }
 }
