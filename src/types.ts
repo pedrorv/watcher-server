@@ -16,4 +16,5 @@ export interface WatcherEvent {
   path: string;
   timestamp: number;
   properties: JsonLiteral;
+  appId: string;
 }

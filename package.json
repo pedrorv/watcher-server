@@ -7,9 +7,10 @@
     "start": "node ./build/main.js",
     "dev": "npm run migrate up && nodemon -r dotenv/config --exec 'ts-node' ./src/main.ts",
     "build": "tsc",
-    "build:lambda": "rm -rf build && NODE_ENV=production webpack && zip -rj lambda.zip build -x \"*.txt\" \"*.DS_Store\"",
+    "build:lambda": "rm -rf build && NODE_ENV=production webpack && cp ../watcher/dist/watcher.js build/watcher.js && zip -rj lambda.zip build -x \"*.txt\" \"*.DS_Store\"",
     "lint": "eslint 'src/**/*.ts'",
-    "migrate": "node-pg-migrate -m db/migrations --tsconfig ./tsconfig.json"
+    "migrate": "node-pg-migrate -m db/migrations --tsconfig ./tsconfig.json",
+    "deploy": "npm run build:lambda && aws lambda update-function-code --function-name watcher-server --zip-file fileb://lambda.zip --profile watcher"
   },
   "dependencies": {
     "cors": "^2.8.5",

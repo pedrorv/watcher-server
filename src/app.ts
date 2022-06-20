@@ -3,6 +3,7 @@ import cors from 'cors';
 import { PgClient } from './pg-client';
 import { WatcherEvent } from './types';
 import { isAuthorized } from './auth';
+import fs from 'fs';
 
 const app = express();
 
@@ -12,6 +13,8 @@ app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (_, res) => res.send('OK'));
+
+app.get('/watcher.js', (_, res) => res.send(fs.readFileSync('./watcher.js')));
 
 app.get('/sessions/:appId', isAuthorized, async (req, res) => {
   try {
@@ -40,10 +43,12 @@ app.get('/events/:sessionId', isAuthorized, async (req, res) => {
 app.post('/events', async (req, res) => {
   try {
     const events = req.body as WatcherEvent[];
-    const insertQueries = events.map(({ type, name, path, timestamp, sessionId, properties }) => ({
-      query: `insert into events (type, name, path, timestamp, session_id, properties) values ($1, $2, $3, $4, $5, $6)`,
-      args: [type, name, path, timestamp, sessionId, properties],
-    }));
+    const insertQueries = events.map(
+      ({ type, name, path, timestamp, sessionId, properties, appId }) => ({
+        query: `insert into events (type, name, path, timestamp, session_id, properties) values ($1, $2, $3, $4, $5, $6, $7)`,
+        args: [type, name, path, timestamp, sessionId, properties, appId],
+      }),
+    );
     await PgClient.transaction(insertQueries);
     res.json({ error: false, message: 'Events inserted' });
   } catch (e) {
