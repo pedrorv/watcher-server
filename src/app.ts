@@ -1,16 +1,18 @@
+import fs from 'fs';
 import express from 'express';
 import cors from 'cors';
 import { PgClient } from './pg-client';
 import { WatcherEvent } from './types';
 import { isAuthorized } from './auth';
-import fs from 'fs';
+import { gzip } from './gzip';
 
 const app = express();
 
 app.use(cors());
 app.options('*', cors());
-app.use(express.json({ limit: '5mb' }));
+app.use(express.json({ limit: '6mb' }));
 app.use(express.urlencoded({ extended: true }));
+app.use(gzip);
 
 app.get('/', (_, res) => res.send('OK'));
 
@@ -19,7 +21,7 @@ app.get('/watcher.js', (_, res) => res.send(fs.readFileSync('./watcher.js')));
 app.get('/sessions/:appId', isAuthorized, async (req, res) => {
   try {
     const sessionIds = await PgClient.query(
-      `select distinct(session_id) from events where app_id = $1`,
+      `select distinct on (session_id) * from events where app_id = $1 order by session_id, timestamp desc`,
       [req.params.appId],
     );
     res.json(sessionIds.map(({ session_id }) => session_id));
