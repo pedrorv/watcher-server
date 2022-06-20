@@ -45,7 +45,7 @@ app.post('/events', async (req, res) => {
     const events = req.body as WatcherEvent[];
     const insertQueries = events.map(
       ({ type, name, path, timestamp, sessionId, properties, appId }) => ({
-        query: `insert into events (type, name, path, timestamp, session_id, properties) values ($1, $2, $3, $4, $5, $6, $7)`,
+        query: `insert into events (type, name, path, timestamp, session_id, properties, app_id) values ($1, $2, $3, $4, $5, $6, $7)`,
         args: [type, name, path, timestamp, sessionId, properties, appId],
       }),
     );
