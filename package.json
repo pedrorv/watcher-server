@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./build/main.js",
     "dev": "npm run migrate up && nodemon -r dotenv/config --exec 'ts-node' ./src/main.ts",
-    "build": "rm -rf build && NODE_ENV=production webpack --stats-error-details && cp ../watcher/dist/watcher.js build/watcher.js",
+    "build": "rm -rf build && NODE_ENV=production webpack --stats-error-details",
     "build:lambda": "BUILD_TO=lambda npm run build && zip -rj lambda.zip build -x \"*.txt\" \"*.DS_Store\"",
     "lint": "eslint 'src/**/*.ts'",
     "migrate": "node-pg-migrate -m db/migrations --tsconfig ./tsconfig.json",

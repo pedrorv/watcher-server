@@ -16,8 +16,6 @@ app.use(gzip);
 
 app.get('/healthcheck', (_, res) => res.send('OK'));
 
-app.get('/watcher.js', (_, res) => res.send(fs.readFileSync('./watcher.js')));
-
 app.get('/sessions/:appId', isAuthorized, async (req, res) => {
   try {
     const sessionIds = await PgClient.query(
