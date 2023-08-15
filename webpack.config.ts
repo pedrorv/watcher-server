@@ -2,9 +2,10 @@ import * as path from 'path';
 import * as webpack from 'webpack';
 
 const isProd = process.env.NODE_ENV === 'production';
+const isLambda = process.env.BUILD_TO === 'lambda';
 
 const config: webpack.Configuration = {
-  entry: './src/lambda.ts',
+  entry: isLambda ? './src/lambda.ts' : './src/main.ts',
   mode: isProd ? 'production' : 'development',
   target: 'node14',
   module: {
@@ -20,6 +21,7 @@ const config: webpack.Configuration = {
   resolve: {
     extensions: ['.wasm', '.mjs', '.js', '.jsx', '.ts', '.tsx', '.json'],
   },
+  externals: [{ 'express': { commonjs: 'express' } }],
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'index.js',
