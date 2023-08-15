@@ -14,7 +14,7 @@ app.use(express.json({ limit: '6mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(gzip);
 
-app.get('/', (_, res) => res.send('OK'));
+app.get('/healthcheck', (_, res) => res.send('OK'));
 
 app.get('/watcher.js', (_, res) => res.send(fs.readFileSync('./watcher.js')));
 
