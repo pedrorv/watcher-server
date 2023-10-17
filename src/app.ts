@@ -18,7 +18,16 @@ app.get('/healthcheck', (_, res) => res.send('OK'));
 app.get('/sessions/:appId', isAuthorized, async (req, res) => {
   try {
     const sessionIds = await PgClient.query(
-      `select distinct on (session_id) * from events where app_id = $1 order by session_id, timestamp desc`,
+      `
+        select session_id, timestamp
+        from (
+          select session_id, max(timestamp) as timestamp
+          from events
+          where app_id = $1
+          group by session_id
+        ) as subquery
+        order by timestamp desc
+      `,
       [req.params.appId],
     );
     res.json(sessionIds.map(({ session_id }) => session_id));
@@ -41,7 +50,7 @@ app.get('/events/:sessionId', isAuthorized, async (req, res) => {
 
 app.post('/events', async (req, res) => {
   try {
-    const events = req.body as WatcherEvent[];
+    const events = (Array.isArray(req.body) ? req.body : [req.body]) as WatcherEvent[];
     const insertQueries = events.map(
       ({ type, name, path, timestamp, sessionId, properties, appId }) => ({
         query: `insert into events (type, name, path, timestamp, session_id, properties, app_id) values ($1, $2, $3, $4, $5, $6, $7)`,
