@@ -21,7 +21,7 @@ const config: webpack.Configuration = {
   resolve: {
     extensions: ['.wasm', '.mjs', '.js', '.jsx', '.ts', '.tsx', '.json'],
   },
-  externals: [{ 'express': { commonjs: 'express' } }],
+  externals: [{ express: { commonjs: 'express' } }],
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'index.js',

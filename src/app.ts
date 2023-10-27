@@ -52,9 +52,9 @@ app.post('/events', async (req, res) => {
   try {
     const events = (Array.isArray(req.body) ? req.body : [req.body]) as WatcherEvent[];
     const insertQueries = events.map(
-      ({ type, name, path, timestamp, sessionId, properties, appId }) => ({
-        query: `insert into events (type, name, path, timestamp, session_id, properties, app_id) values ($1, $2, $3, $4, $5, $6, $7)`,
-        args: [type, name, path, timestamp, sessionId, properties, appId],
+      ({ type, name, path, uniqueSelector, timestamp, sessionId, properties, appId }) => ({
+        query: `insert into events (type, name, path, unique_selector, timestamp, session_id, properties, app_id) values ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        args: [type, name, path, uniqueSelector, timestamp, sessionId, properties, appId],
       }),
     );
     await PgClient.transaction(insertQueries);

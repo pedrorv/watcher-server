@@ -14,6 +14,7 @@ export interface WatcherEvent {
   name: string;
   sessionId: string;
   path: string;
+  uniqueSelector: string;
   timestamp: number;
   properties: JsonLiteral;
   appId: string;
