@@ -42,7 +42,7 @@ app.get('/events/:sessionId', isAuthorized, async (req, res) => {
       `select * from events where session_id = $1 order by timestamp`,
       [req.params.sessionId],
     );
-    res.json(events);
+    res.json(events.map((e: WatcherEvent) => ({ ...e, timestamp: +e.timestamp })));
   } catch (e) {
     res.json({ error: true, message: e.message });
   }
