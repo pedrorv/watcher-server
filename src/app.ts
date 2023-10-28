@@ -9,7 +9,7 @@ const app = express();
 
 app.use(cors());
 app.options('*', cors());
-app.use(express.json({ limit: '25mb' }));
+app.use(express.json({ limit: '5mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(gzip);
 
@@ -17,7 +17,7 @@ app.get('/healthcheck', (_, res) => res.send('OK'));
 
 app.get('/sessions/:appId', isAuthorized, async (req, res) => {
   try {
-    const sessionIds = await PgClient.query(
+    const sessions = await PgClient.query(
       `
         select session_id, timestamp
         from (
@@ -30,7 +30,7 @@ app.get('/sessions/:appId', isAuthorized, async (req, res) => {
       `,
       [req.params.appId],
     );
-    res.json(sessionIds.map(({ session_id }) => session_id));
+    res.json(sessions.map((s: any) => ({ id: s.session_id, lastEventTimestamp: +s.timestamp })));
   } catch (e) {
     res.json({ error: true, message: e.message });
   }
