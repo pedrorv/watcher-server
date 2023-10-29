@@ -64,4 +64,13 @@ app.post('/events', async (req, res) => {
   }
 });
 
+app.delete('/events/:sessionId', async (req, res) => {
+  try {
+    await PgClient.query(`delete from events where session_id = $1 `, [req.params.sessionId]);
+    res.json({ error: false, message: 'Events deleted' });
+  } catch (e) {
+    res.json({ error: true, message: e.message });
+  }
+});
+
 export { app };
