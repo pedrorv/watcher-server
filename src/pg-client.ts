@@ -6,6 +6,7 @@ const PgPool = new Pool({
   host: process.env.POSTGRES_HOST,
   port: parseInt(process.env.POSTGRES_PORT || '5432', 10),
   database: process.env.POSTGRES_DATABASE,
+  ssl: process.env.NODE_ENV === 'production',
 });
 
 type IPgClient = Pool | PoolClient;
