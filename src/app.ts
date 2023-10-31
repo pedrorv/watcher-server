@@ -15,6 +15,8 @@ app.use(gzip);
 
 app.get('/healthcheck', (_, res) => res.send('OK'));
 
+app.get('/authorized', isAuthorized, (_, res) => res.send('OK'));
+
 app.get('/sessions/:appId', isAuthorized, async (req, res) => {
   try {
     const sessions = await PgClient.query(
@@ -36,7 +38,7 @@ app.get('/sessions/:appId', isAuthorized, async (req, res) => {
   }
 });
 
-app.get('/events/:sessionId', isAuthorized, async (req, res) => {
+app.get('/events/:sessionId', async (req, res) => {
   try {
     const events = await PgClient.query(
       `select * from events where session_id = $1 order by timestamp`,
