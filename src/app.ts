@@ -21,13 +21,13 @@ app.get('/apps', isAuthorized, async (_, res) => {
   try {
     const apps = await PgClient.query(
       `
-        select app_id, domain
+        select distinct app_id, domain
         from (
-          select distinct app_id, properties->'location'->'origin' as domain
+          select distinct app_id, properties->'location'->>'origin' as domain
           from events
           where name = 'dom-change'
         ) as subquery
-        where domain is not null
+        where domain ilike 'http%'
       `,
     );
     res.json(apps.map((s: any) => ({ id: s.app_id, domain: s.domain })));
