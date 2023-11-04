@@ -17,6 +17,25 @@ app.get('/healthcheck', (_, res) => res.send('OK'));
 
 app.get('/authorized', isAuthorized, (_, res) => res.send('OK'));
 
+app.get('/apps', isAuthorized, async (_, res) => {
+  try {
+    const apps = await PgClient.query(
+      `
+        select app_id, domain
+        from (
+          select distinct app_id, properties->'location'->'origin' as domain
+          from events
+          where name = 'dom-change'
+        ) as subquery
+        where domain is not null
+      `,
+    );
+    res.json(apps.map((s: any) => ({ id: s.app_id, domain: s.domain })));
+  } catch (e) {
+    res.json({ error: true, message: e.message });
+  }
+});
+
 app.get('/sessions/:appId', isAuthorized, async (req, res) => {
   try {
     const sessions = await PgClient.query(
