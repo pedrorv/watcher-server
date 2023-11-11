@@ -102,3 +102,31 @@ The server exposes several API endpoints:
 - `GET /events/:sessionId`: Get events for a session.
 - `POST /events`: Add new events.
 - `DELETE /events/:sessionId`: Delete events for a session.
+
+## Database Migrations
+
+### Using `node-pg-migrate`
+
+This project uses `node-pg-migrate` for handling database migrations. It's essential that any new database schema changes are managed through migrations using this tool to ensure consistency and version control of the database schema.
+
+### Creating New Migrations
+
+When you need to create a new database migration, follow these steps:
+
+1. Generate a new migration file by running:
+
+   ```bash
+   npm run migrate -- create migration-name
+   ```
+
+   Replace `migration-name` with a descriptive name for your migration. This command will create a new file in the `/db/migrations` directory with a timestamp as part of the filename.
+
+2. Open the newly created migration file and implement the `up` and `down` methods. The `up` method should apply your new changes to the database, while the `down` method should revert those changes.
+
+3. Ensure to thoroughly test your migration in a development environment before deploying it to production.
+
+4. After testing, commit the new migration file.
+
+### Documentation
+
+For detailed information on how to use `node-pg-migrate`, including its command-line options and API, refer to the [node-pg-migrate documentation](https://salsita.github.io/node-pg-migrate/#/).
