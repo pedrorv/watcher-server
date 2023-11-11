@@ -72,6 +72,38 @@ app.get('/events/:sessionId', async (req, res) => {
 app.post('/events', async (req, res) => {
   try {
     const events = (Array.isArray(req.body) ? req.body : [req.body]) as WatcherEvent[];
+    if (!events.length) {
+      return res.json({ error: true, message: 'No events to insert' });
+    }
+
+    const sessionId = events[0]?.sessionId;
+    if (!sessionId) {
+      return res.json({ error: true, message: 'Events must have a sessionId' });
+    }
+
+    if (!events.every((event) => event.sessionId === sessionId)) {
+      return res.json({ error: true, message: 'All events must belong to the same session' });
+    }
+
+    const [lastSessionEvent] = await PgClient.query(
+      `
+        select session_id, max(timestamp) as timestamp
+        from events
+        where session_id = $1
+        group by session_id
+      `,
+      [sessionId],
+    );
+
+    if (lastSessionEvent) {
+      const fiveMinutes = 1000 * 60 * 5;
+      const sessionExpirationTimestamp = Number((lastSessionEvent as any).timestamp) + fiveMinutes;
+
+      if (Date.now() > sessionExpirationTimestamp) {
+        return res.json({ error: true, message: 'Session expired' });
+      }
+    }
+
     const insertQueries = events.map(
       ({ type, name, path, uniqueSelector, timestamp, sessionId, properties, appId }) => ({
         query: `insert into events (type, name, path, unique_selector, timestamp, session_id, properties, app_id) values ($1, $2, $3, $4, $5, $6, $7, $8)`,
