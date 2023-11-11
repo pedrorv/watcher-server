@@ -7,10 +7,8 @@
     "start": "node ./build/index.js",
     "dev": "npm run migrate up && nodemon -r dotenv/config --exec 'ts-node' ./src/main.ts",
     "build": "rm -rf build && NODE_ENV=production webpack",
-    "build:lambda": "BUILD_TO=lambda npm run build && zip -rj lambda.zip build -x \"*.txt\" \"*.DS_Store\"",
     "lint": "eslint 'src/**/*.ts'",
-    "migrate": "node-pg-migrate -m db/migrations --tsconfig ./tsconfig.json",
-    "deploy": "npm run build:lambda && aws lambda update-function-code --function-name watcher-server --zip-file fileb://lambda.zip --profile watcher"
+    "migrate": "node-pg-migrate -m db/migrations --tsconfig ./tsconfig.json"
   },
   "dependencies": {
     "compression": "^1.7.4",
@@ -18,7 +16,6 @@
     "express": "^4.17.1",
     "node-pg-migrate": "^6.2.1",
     "pg": "^8.7.1",
-    "serverless-http": "^3.0.1",
     "uuid": "^8.3.1"
   },
   "devDependencies": {
