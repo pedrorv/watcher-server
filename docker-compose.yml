@@ -21,7 +21,6 @@ services:
       - .env
     environment:
       - NODE_ENV=development
-      - DATABASE_URL=postgres://watcher:123456@watcher-db:5432/watcher
 
   postgres:
     container_name: watcher-db
