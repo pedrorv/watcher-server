@@ -2,3 +2,4 @@ node_modules/
 build/
 lambda.zip
 .DS_Store
+.env
